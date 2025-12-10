@@ -806,16 +806,15 @@ async def main():
         logger.info("✅ Groq API ключ обнаружен - голосовые сообщения включены (БЕСПЛАТНО!)")
         # Проверяем наличие ffmpeg
         try:
-            import subprocess
-            result = subprocess.run(['which', 'ffmpeg'], capture_output=True, text=True)
-            if result.returncode == 0:
-                logger.info("✅ ffmpeg установлен - обработка аудио доступна")
+            import shutil
+            ffmpeg_path = shutil.which('ffmpeg')
+            if ffmpeg_path:
+                logger.info(f"✅ ffmpeg установлен - обработка аудио доступна ({ffmpeg_path})")
             else:
                 logger.warning("⚠️  ffmpeg не найден! Голосовые сообщения не будут работать.")
                 logger.warning("   Установите: apt install ffmpeg (на Ubuntu/Debian)")
         except Exception as e:
             logger.warning(f"⚠️  Ошибка проверки ffmpeg: {e}")
-            logger.warning("   Установите: apt install ffmpeg (на Ubuntu/Debian)")
     else:
         logger.warning("⚠️  Groq API ключ не установлен - голосовые сообщения отключены")
         logger.warning("   Получите БЕСПЛАТНЫЙ ключ: https://console.groq.com/keys")
