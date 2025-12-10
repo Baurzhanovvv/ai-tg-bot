@@ -807,11 +807,15 @@ async def main():
         # Проверяем наличие ffmpeg
         try:
             import subprocess
-            subprocess.run(['ffmpeg', '-version'], capture_output=True, check=True)
-            logger.info("✅ ffmpeg установлен - обработка аудио доступна")
-        except (subprocess.CalledProcessError, FileNotFoundError):
-            logger.warning("⚠️  ffmpeg не установлен! Голосовые сообщения не будут работать.")
-            logger.warning("   Установите: brew install ffmpeg")
+            result = subprocess.run(['which', 'ffmpeg'], capture_output=True, text=True)
+            if result.returncode == 0:
+                logger.info("✅ ffmpeg установлен - обработка аудио доступна")
+            else:
+                logger.warning("⚠️  ffmpeg не найден! Голосовые сообщения не будут работать.")
+                logger.warning("   Установите: apt install ffmpeg (на Ubuntu/Debian)")
+        except Exception as e:
+            logger.warning(f"⚠️  Ошибка проверки ffmpeg: {e}")
+            logger.warning("   Установите: apt install ffmpeg (на Ubuntu/Debian)")
     else:
         logger.warning("⚠️  Groq API ключ не установлен - голосовые сообщения отключены")
         logger.warning("   Получите БЕСПЛАТНЫЙ ключ: https://console.groq.com/keys")
